@@ -4,41 +4,52 @@ import './App.css';
 
 function App() {
 
-  const [time, setTime] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  useEffect(() => {
-    let intervalId;
-    if (isRunning) {
+  const [time, setTime] = useState({
+    sec: 0,
+    min: 0,
+  });
+  const [intervalId, setIntervalId] = useState();
 
-      intervalId = setInterval(() => setTime(time + 1), 10);
-    }
-    return () => clearInterval(intervalId);
-  }, [isRunning, time]);
+  const updateTimer = () => {
+    setTime((prev) => {
+      let newTime = { ...prev };
 
+      if (newTime.sec < 59) newTime.sec += 1;
+      else {
+        newTime.min += 1;
+        newTime.sec = 0;
+      }
 
-  const startAndStop = () => {
-    setIsRunning(!isRunning);
+      return newTime;
+    });
   };
 
+  const pauseOrResume = () => {
+    if (!intervalId) {
+      let id = setInterval(updateTimer, 1000);
+      setIntervalId(id);
+    } else {
+      clearInterval(intervalId);
+      setIntervalId("");
+    }
+  };
 
   const reset = () => {
-    setTime(0);
+    clearInterval(intervalId);
+    setIntervalId("");
+    setTime({
+      sec: 0,
+      min: 0,
+    });
   };
-
-
-  const min = Math.floor((time % 360000) / 6000);
-
-
-  const sec = Math.floor((time % 6000) / 100);
-
   return (
     <div className="App">
       <h1>Stopwatch</h1>
       <span>Time: </span>
-      <span>{min.toString().padStart(1, "0")}:
-        {sec.toString().padStart(2, "0")}</span><br />
-      <button onClick={startAndStop}>
-        {isRunning ? "Stop" : "Start"}
+      <span>{time.min}:
+        {`${time.sec < 10 ? 0 : ""}${time.sec}`}</span><br />
+      <button onClick={pauseOrResume}>
+        {intervalId ? "Stop" : "Start"}
       </button>
       <button onClick={reset}>
         Reset
