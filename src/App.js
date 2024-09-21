@@ -34,8 +34,8 @@ function App() {
   return (
     <div className="App">
       <h1>Stopwatch</h1>
-      <span>Time : </span>
-      <span>{min.toString().padStart(2, "0")}:
+      <span>Time: </span>
+      <span>{min.toString().padStart(1, "0")}:
         {sec.toString().padStart(2, "0")}</span><br />
       <button onClick={startAndStop}>
         {isRunning ? "Stop" : "Start"}
